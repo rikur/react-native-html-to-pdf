@@ -59,7 +59,7 @@ public class RNHTMLtoPDFModule extends ReactContextBaseJavaModule {
         destinationFile = getTempFile(fileName);
       }
 
-      String filePath = convertToPDF(htmlString, destinationFile);
+      String filePath = convertToPDF(htmlString, destinationFile, options);
       String base64 = "";
 
       if (options.hasKey("base64") && options.getBoolean("base64") == true) {
@@ -77,10 +77,10 @@ public class RNHTMLtoPDFModule extends ReactContextBaseJavaModule {
     }
   }
 
-  private String convertToPDF(String htmlString, File file) throws Exception {
+  private String convertToPDF(String htmlString, File file, ReadableMap options) throws Exception {
     try {
       PdfConverter.getInstance()
-              .convert(mReactContext, htmlString, file);
+              .convert(mReactContext, htmlString, file, options);
       String absolutePath = file.getAbsolutePath();
 
       return absolutePath;
