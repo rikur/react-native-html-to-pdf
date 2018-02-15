@@ -96,7 +96,6 @@ class Example extends Component {
 | `fileName` | `string` | Random  | Custom Filename excluding .pdf extension
 | `base64` | boolean | false  | return base64 string of pdf file (not recommended)
 
-
 #### iOS Only
 
 | Param | Type | Default | Note |
@@ -111,3 +110,13 @@ class Example extends Component {
 | Param | Type | Default | Note |
 |---|---|---|---|
 | `fonts` | Array | | Allow custom fonts `['/fonts/TimesNewRoman.ttf', '/fonts/Verdana.ttf']`
+
+### Options: page
+
+Android Only. Plan to add support to iOS.
+
+| Param | Type | Default | Note |
+|---|---|---|---|
+| `orientation` | `string` | Portrait | Landscape, Portrait
+| `size` | `string` | A4  | A0 - A8, UsGovernmentLetter, UsLetter, UsLegal
+
