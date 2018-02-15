@@ -68,6 +68,10 @@ class Example extends Component {
       html: '<h1>PDF TEST</h1>',
       fileName: 'test',
       directory: 'docs',
+      page: {
+        size: page.size.UsLetter,
+        orientation: page.orientation.Landscape,
+      },      
     };
 
     let file = await RNHTMLtoPDF.convert(options)
