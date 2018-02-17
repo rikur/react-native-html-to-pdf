@@ -120,3 +120,10 @@ Android Only. Plan to add support to iOS.
 | `orientation` | `string` | Portrait | Landscape, Portrait
 | `size` | `string` | A4  | A0 - A8, UsGovernmentLetter, UsLetter, UsLegal
 
+## Images
+
+````<img src="https://www.pexels.com/photo/cat-animal-pet-9673/" />````
+
+### Android Assets
+
+````<img src="file:///android_asset/images/clientLogo.png" />````
