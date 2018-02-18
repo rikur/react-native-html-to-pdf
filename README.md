@@ -113,8 +113,6 @@ class Example extends Component {
 
 ### Options: page
 
-Android Only. Plan to add support to iOS.
-
 | Param | Type | Default | Note |
 |---|---|---|---|
 | `orientation` | `string` | Portrait | Landscape, Portrait
