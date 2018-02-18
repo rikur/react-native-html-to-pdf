@@ -9,11 +9,6 @@
 #import <React/RCTUtils.h>
 #import "RNHTMLtoPDF.h"
 
-// #define PDFSize CGSizeMake(612,792)
-
-NSString *const PageDefaultSize = @"A4";
-NSString *const PageDefaultOrientation = @"Portrait";
-
 typedef struct PageStruct{
     const char * const key;
     int width;
@@ -45,19 +40,25 @@ const PageStruct pageTableLookup[] = {
     { "A1", 1684, 2384, },
     { "A2", 1191, 1684, },
     { "A3", 842, 1191, },
-    { "A4", 595, 842, }, // <- Default
+    { "A4", 595, 842, },
     { "A5", 420, 595, },
     { "A6", 298, 420, },
     { "A7", 210, 298, },
     { "A8", 147, 210, },
     { "A9", 105, 147, },
     { "A10", 74, 105, },
-    { "UsLetter", 792, 612, },
+    { "UsLetter", 792, 612, },   // <- Default to US Letter
     { "UsGovernmentLetter", 792, 575, },
     { "Legal", 1008, 612, }
 };
 
 const int PageStructIndexA4 = 4;
+const int PageStructIndexUsLetter = 11;
+
+// Google search returns more hits for "US Letter" than "A4"
+// Portrait is more common than landscape
+NSString *const PageDefaultSize = @"UsLetter";
+NSString *const PageDefaultOrientation = @"Portrait";
 
 @implementation UIPrintPageRenderer (PDF)
 - (NSData*) printToPDF
@@ -198,7 +199,7 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
 }
 
 - (CGSize) getMediaSize:(NSDictionary *)options {
-    PageStruct pageStruct = pageTableLookup[PageStructIndexA4];
+    PageStruct pageStruct = pageTableLookup[PageStructIndexUsLetter];
     NSString* pageSize = PageDefaultSize;
     NSString* pageOrientation = PageDefaultOrientation;
     if (options[@"page"]) {
