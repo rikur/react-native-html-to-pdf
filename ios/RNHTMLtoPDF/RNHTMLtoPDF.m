@@ -9,7 +9,55 @@
 #import <React/RCTUtils.h>
 #import "RNHTMLtoPDF.h"
 
-#define PDFSize CGSizeMake(612,792)
+// #define PDFSize CGSizeMake(612,792)
+
+NSString *const PageDefaultSize = @"A4";
+NSString *const PageDefaultOrientation = @"Portrait";
+
+typedef struct PageStruct{
+    const char * const key;
+    int width;
+    int height;
+} PageStruct;
+
+
+// http://www.printernational.org/iso-paper-sizes.php
+// http://www.printernational.org/american-paper-sizes.php
+//
+//    A0    841 mm x 1189 mm    33 in x 46.81 in    2384 pt x 3370 pt
+//    A1    594 mm x 841 mm    23.39 in x 33 in    1684 pt x 2384 pt
+//    A2    420 mm x 594 mm    16.54 in x 23.36 in    1191 pt x 1684 pt
+//    A3    297 mm x 420 mm    11.69 in x 16.54 in    842 pt x 1191 pt
+//    A4    210 mm 297 mm    8.27 in x 11.69 in    595 pt x 842 pt
+//    A5    148 mm x 210 mm    5.83 in x 8.27 in    420 pt x 595 pt
+//    A6    105 mm x 148 mm    4.13 in x 5.83 in    298 pt x 420 pt
+//    A7    74 mm x 105 mm    2.91 in x 4.13 in    210 pt x 298 pt
+//    A8    52 mm x 74 mm    2.05 in x 2.91 in    147 pt x 210 pt
+//    A9    37 mm x 52 mm    1.46 in x 2.05 in    105 pt x 147 pt
+//    A10    26 mm x 37 mm    1.02 in x 1.46 in    74 pt x 105 pt
+//
+//    ANSI-A (Letter)     792 pt x 612 pt
+//    US Government    279 mm x 203 mm    11 in x 8 in    792 pt x 575 pt
+//    Legal (Legal-2)    356 mm x 216 mm    14 in x 8.5 in    1008 pt x 612 pt
+//
+const PageStruct pageTableLookup[] = {
+    { "A0", 2384, 3370, },
+    { "A1", 1684, 2384, },
+    { "A2", 1191, 1684, },
+    { "A3", 842, 1191, },
+    { "A4", 595, 842, }, // <- Default
+    { "A5", 420, 595, },
+    { "A6", 298, 420, },
+    { "A7", 210, 298, },
+    { "A8", 147, 210, },
+    { "A9", 105, 147, },
+    { "A10", 74, 105, },
+    { "UsLetter", 792, 612, },
+    { "UsGovernmentLetter", 792, 575, },
+    { "Legal", 1008, 612, }
+};
+
+
 
 @implementation UIPrintPageRenderer (PDF)
 - (NSData*) printToPDF
@@ -95,7 +143,7 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
         float height = [RCTConvert float:options[@"height"]];
         _PDFSize = CGSizeMake(width, height);
     } else {
-        _PDFSize = PDFSize;
+        _PDFSize = [self getMediaSize:options];
     }
 
     if (options[@"padding"]) {
@@ -147,6 +195,28 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
         NSError *error;
         _rejectBlock(RCTErrorUnspecified, nil, RCTErrorWithMessage(error.description));
     }
+}
+
+- (CGSize) getMediaSize:(NSDictionary *)options {
+    PageStruct pageStruct = pageTableLookup[4]; // Default to A4 if page option not valid or found
+    NSString* pageSize = PageDefaultSize;
+    NSString* pageOrientation = PageDefaultOrientation;
+    if (options[@"page"]) {
+        NSDictionary * pageOptions = [RCTConvert NSDictionary:options[@"page"]];
+        pageSize = pageOptions[@"size"] ? [RCTConvert NSString:pageOptions[@"size"]] : PageDefaultSize;
+        pageOrientation = pageOptions[@"orientation"] ? [RCTConvert NSString:pageOptions[@"orientation"]] : PageDefaultOrientation;
+    }
+    for (int i = 0; i < (sizeof(pageTableLookup) / sizeof(PageStruct)); ++i) {
+        PageStruct pg = pageTableLookup[i];
+        if (strcmp(pg.key, pageSize.UTF8String) == 0) {
+            pageStruct = pg;
+            break;
+        }
+    }
+    if ([pageOrientation isEqualToString:@"Landscape"]) {
+        return CGSizeMake(pageStruct.height, pageStruct.width);
+    }
+    return CGSizeMake(pageStruct.width, pageStruct.height);
 }
 
 @end
