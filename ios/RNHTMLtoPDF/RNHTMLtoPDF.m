@@ -57,7 +57,7 @@ const PageStruct pageTableLookup[] = {
     { "Legal", 1008, 612, }
 };
 
-
+const int PageStructIndexA4 = 4;
 
 @implementation UIPrintPageRenderer (PDF)
 - (NSData*) printToPDF
@@ -198,13 +198,13 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
 }
 
 - (CGSize) getMediaSize:(NSDictionary *)options {
-    PageStruct pageStruct = pageTableLookup[4]; // Default to A4 if page option not valid or found
+    PageStruct pageStruct = pageTableLookup[PageStructIndexA4];
     NSString* pageSize = PageDefaultSize;
     NSString* pageOrientation = PageDefaultOrientation;
     if (options[@"page"]) {
-        NSDictionary * pageOptions = [RCTConvert NSDictionary:options[@"page"]];
-        pageSize = pageOptions[@"size"] ? [RCTConvert NSString:pageOptions[@"size"]] : PageDefaultSize;
-        pageOrientation = pageOptions[@"orientation"] ? [RCTConvert NSString:pageOptions[@"orientation"]] : PageDefaultOrientation;
+        NSDictionary * optionsPage = [RCTConvert NSDictionary:options[@"page"]];
+        pageSize = optionsPage[@"size"] ? [RCTConvert NSString:optionsPage[@"size"]] : PageDefaultSize;
+        pageOrientation = optionsPage[@"orientation"] ? [RCTConvert NSString:optionsPage[@"orientation"]] : PageDefaultOrientation;
     }
     for (int i = 0; i < (sizeof(pageTableLookup) / sizeof(PageStruct)); ++i) {
         PageStruct pg = pageTableLookup[i];
