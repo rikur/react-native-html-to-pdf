@@ -100,8 +100,8 @@ class Example extends Component {
 
 | Param | Type | Default | Note |
 |---|---|---|---|
-| `height` | number | 612  | Set document height (points) ( US Letter Landscape )
-| `width` | number | 792  | Set document width (points) ( US Letter Landscape )
+| `height` | number | 612  | Set document height points to US Letter, Landscape
+| `width` | number | 792  | Set document width points to US Letter, Landscape
 | `padding` | number | 10  | Outer padding (points)
 
 
