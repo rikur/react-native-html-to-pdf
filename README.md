@@ -116,7 +116,7 @@ class Example extends Component {
 | Param | Type | Default | Note |
 |---|---|---|---|
 | `orientation` | `string` | Portrait | Landscape, Portrait
-| `size` | `string` | A4  | A0 - A8, UsGovernmentLetter, UsLetter, UsLegal
+| `size` | `string` | UsLetter  | A0 - A8, UsGovernmentLetter, UsLetter, UsLegal
 
 ## Images
 
