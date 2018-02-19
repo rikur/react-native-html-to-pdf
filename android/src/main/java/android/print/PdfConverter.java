@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 
 import java.io.File;
 
+
 /**
  * Converts HTML to PDF.
  * <p>
@@ -38,9 +39,9 @@ public class PdfConverter implements Runnable {
   private PdfConverter() {}
 
   public static synchronized PdfConverter getInstance() {
-    if (sInstance == null)
+    if (sInstance == null) {
       sInstance = new PdfConverter();
-
+    }
     return sInstance;
   }
 
@@ -92,7 +93,9 @@ public class PdfConverter implements Runnable {
     if (mIsCurrentlyConverting)
       return;
 
-    setOptions(options);
+    PdfOptions pdfOptions = new PdfOptions(options);
+    Log.d(TAG, pdfOptions.toString());
+    setOptions(pdfOptions);
 
     mContext = context;
     mHtmlString = htmlString;
@@ -125,70 +128,8 @@ public class PdfConverter implements Runnable {
         .build();
   }
 
-  private PrintAttributes.MediaSize getMediaSize(String size,
-                                                 String orientation) {
-    PrintAttributes.MediaSize mediaSize = null;
-    switch (size) {
-    case "A0":
-      mediaSize = PrintAttributes.MediaSize.ISO_A0;
-      break;
-    case "A1":
-      mediaSize = PrintAttributes.MediaSize.ISO_A1;
-      break;
-    case "A2":
-      mediaSize = PrintAttributes.MediaSize.ISO_A2;
-      break;
-    case "A3":
-      mediaSize = PrintAttributes.MediaSize.ISO_A3;
-      break;
-    case "A4":
-      mediaSize = PrintAttributes.MediaSize.ISO_A4;
-      break;
-    case "A5":
-      mediaSize = PrintAttributes.MediaSize.ISO_A5;
-      break;
-    case "A6":
-      mediaSize = PrintAttributes.MediaSize.ISO_A6;
-      break;
-    case "A7":
-      mediaSize = PrintAttributes.MediaSize.ISO_A7;
-      break;
-    case "A8":
-      mediaSize = PrintAttributes.MediaSize.ISO_A8;
-      break;
-    case "UsGovernmentLetter":
-      mediaSize = PrintAttributes.MediaSize.NA_GOVT_LETTER;
-      break;
-    case "UsLetter":
-      mediaSize = PrintAttributes.MediaSize.NA_LETTER;
-      break;
-    case "UsLegal":
-      mediaSize = PrintAttributes.MediaSize.NA_LEGAL;
-      break;
-    default:
-      mediaSize = PrintAttributes.MediaSize.ISO_A4;
-      break;
-    }
-    if (orientation.equals("Landscape")) {
-      return mediaSize.asLandscape();
-    }
-    return mediaSize;
-  }
-
-  private void setOptions(final ReadableMap options) {
-
-    ReadableMap page = options.hasKey("page") ? options.getMap("page") : null;
-    String size = "A4";
-    String orientation = "Portrait";
-    if (page != null) {
-      size = page.hasKey("size") ? page.getString("size") : size;
-      orientation = page.hasKey("orientation") ? page.getString("orientation")
-                                               : orientation;
-      Log.d(TAG, String.format("size.......: %s", size));
-      Log.d(TAG, String.format("orientation: %s", orientation));
-    }
-
-    PrintAttributes.MediaSize mediaSize = getMediaSize(size, orientation);
+  private void setOptions(final PdfOptions pdfOptions) {
+    PrintAttributes.MediaSize mediaSize = pdfOptions.getMediaSize();
     PrintAttributes printAttributes =
         new PrintAttributes.Builder()
             .setMediaSize(mediaSize)
