@@ -23,6 +23,8 @@ public class RNHTMLtoPDFModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext mReactContext;
 
+  private ReadableMap mIntializerList;
+
   public RNHTMLtoPDFModule(ReactApplicationContext reactContext) {
     super(reactContext);
     mReactContext = reactContext;
@@ -30,8 +32,10 @@ public class RNHTMLtoPDFModule extends ReactContextBaseJavaModule {
 
   @Override
   public String getName() {
-    return "RNHTMLtoPDF";
+    //return "RNHTMLtoPDF";
+    return "RnHtmlToPdf";
   }
+
 
   @ReactMethod
   public void convert(final ReadableMap options, final Promise promise) {
@@ -79,10 +83,9 @@ public class RNHTMLtoPDFModule extends ReactContextBaseJavaModule {
 
   private String convertToPDF(String htmlString, File file, ReadableMap options) throws Exception {
     try {
-      PdfConverter.getInstance()
-              .convert(mReactContext, htmlString, file, options);
+      PdfConverter pdfConverter = PdfConverter.getInstance();
+      pdfConverter.convert(mReactContext, htmlString, file, options);
       String absolutePath = file.getAbsolutePath();
-
       return absolutePath;
     } catch (Exception e) {
       throw new Exception(e);
