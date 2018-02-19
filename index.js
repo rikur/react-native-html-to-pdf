@@ -51,12 +51,12 @@ const RNHTMLtoPDF = {
         }
         if(!options.page.orientation) {
             options.page.orientation =  pdfOptionsDefault.orientation;
-        }
-
+        }        
         return RnHtmlToPdf.convert(options).then(result => {
             return result;
           });
     },
+   
 };
 
 module.exports = {

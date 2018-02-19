@@ -24,7 +24,7 @@ public class PdfOptions {
 
     private static final String TAG = "PdfOptions";
 
-    private static final String OrientationLandscape = "landscape";
+    private static final String OrientationLandscape = "Landscape";
 
     private static final double MillimetersToInches = 0.0393701;
     private static final double MillimetersToPoints = 2.83465;
@@ -134,7 +134,7 @@ public class PdfOptions {
                 mediaSize = PrintAttributes.MediaSize.ISO_A4;
                 break;
         }
-        if (orientation.equals(OrientationLandscape)) {
+        if (orientation.equalsIgnoreCase(OrientationLandscape)) {
             return mediaSize.asLandscape();
         }
         return mediaSize;
