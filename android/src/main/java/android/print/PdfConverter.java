@@ -5,8 +5,6 @@
 
 package android.print;
 
-import com.facebook.react.bridge.ReadableMap;
-
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
@@ -16,7 +14,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.File;
+import android.util.Base64;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
+import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 /**
  * Converts HTML to PDF.
@@ -35,6 +39,9 @@ public class PdfConverter implements Runnable {
   private PrintAttributes mPdfPrintAttrs;
   private boolean mIsCurrentlyConverting;
   private WebView mWebView;
+  private boolean mShouldEncode;
+  private WritableMap mResultMap;
+  private Promise mPromise;
 
   private PdfConverter() {}
 
@@ -64,13 +71,26 @@ public class PdfConverter implements Runnable {
               null, new PrintDocumentAdapter.WriteResultCallback() {
                 @Override
                 public void onWriteFinished(PageRange[] pages) {
-                  destroy();
+                  try {
+                    String base64 = "";
+                    if (mShouldEncode) {
+                      base64 = encodeFromFile(mPdfFile);
+                    }
+                    mResultMap.putString("filePath",
+                                         mPdfFile.getAbsolutePath());
+                    mResultMap.putString("base64", base64);
+                    mPromise.resolve(mResultMap);
+                  } catch (IOException e) {
+                    mPromise.reject(e.getMessage());
+                  } finally {
+                    destroy();
+                  }
                 }
               });
         }
       }
     });
-    mWebView.loadDataWithBaseURL(null, mHtmlString, "text/html", "utf-8",null);    
+    mWebView.loadData(mHtmlString, "text/HTML", "UTF-8");
   }
 
   public PrintAttributes getPdfPrintAttrs() {
@@ -82,7 +102,8 @@ public class PdfConverter implements Runnable {
   }
 
   public void convert(Context context, String htmlString, File file,
-                      final ReadableMap options) {
+                      boolean shouldEncode, WritableMap resultMap,
+                      Promise promise) {
     if (context == null)
       throw new IllegalArgumentException("context can't be null");
     if (htmlString == null)
@@ -101,6 +122,9 @@ public class PdfConverter implements Runnable {
     mHtmlString = htmlString;
     mPdfFile = file;
     mIsCurrentlyConverting = true;
+    mShouldEncode = shouldEncode;
+    mResultMap = resultMap;
+    mPromise = promise;
     runOnUiThread(this);
   }
 
@@ -153,5 +177,15 @@ public class PdfConverter implements Runnable {
     mPdfPrintAttrs = null;
     mIsCurrentlyConverting = false;
     mWebView = null;
+    mShouldEncode = false;
+    mResultMap = null;
+    mPromise = null;
+  }
+
+  private String encodeFromFile(File file) throws IOException {
+    RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+    byte[] fileBytes = new byte[(int)randomAccessFile.length()];
+    randomAccessFile.readFully(fileBytes);
+    return Base64.encodeToString(fileBytes, Base64.DEFAULT);
   }
 }
