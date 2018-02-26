@@ -41,7 +41,7 @@ const pdfOptionsDefault = {
 const RNHTMLtoPDF = {
     page: pageOptions,
 
-    convert(options) {
+    async convert(options) {
         // Create default options if user did not specify
         if(!options.page) {
             options.page = pdfOptionsDefault.page;
@@ -52,9 +52,8 @@ const RNHTMLtoPDF = {
         if(!options.page.orientation) {
             options.page.orientation =  pdfOptionsDefault.orientation;
         }        
-        return RnHtmlToPdf.convert(options).then(result => {
-            return result;
-          });
+        const result = await RnHtmlToPdf.convert(options);
+        return result;
     },
    
 };

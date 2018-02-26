@@ -33,9 +33,12 @@ public class PdfOptions {
     private static String _pageId = "";
     private static double _pageHeightMm = 0;
     private static double _pageWidthMm = 0;
+    private static boolean _shouldEncode = false;
 
     // Missing option default values should have been added by JS
     public PdfOptions(final ReadableMap options) {
+        _shouldEncode = options.hasKey("base64") ? options.getBoolean("base64") : _shouldEncode;
+        
         if (!options.hasKey("page")) {
             throw new IllegalArgumentException("option not found: page");
         }
@@ -70,6 +73,12 @@ public class PdfOptions {
     public double getPageWidthMm() {
         return _pageWidthMm;
     }
+
+    public boolean getShouldEncode() {
+        return _shouldEncode;
+    }
+
+    
 
     public String toString() {
         return String.format("%s Page: %s, %f inch x %f inch ( %f pt x %f pt ) ( %f mm x %f mm )",

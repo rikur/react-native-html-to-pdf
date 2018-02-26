@@ -90,7 +90,7 @@ public class PdfConverter implements Runnable {
         }
       }
     });
-    mWebView.loadData(mHtmlString, "text/HTML", "UTF-8");
+    mWebView.loadDataWithBaseURL(null, mHtmlString, "text/html", "utf-8", null);
   }
 
   public PrintAttributes getPdfPrintAttrs() {
@@ -102,7 +102,7 @@ public class PdfConverter implements Runnable {
   }
 
   public void convert(Context context, String htmlString, File file,
-                      boolean shouldEncode, WritableMap resultMap,
+                      final ReadableMap options, WritableMap resultMap,
                       Promise promise) {
     if (context == null)
       throw new IllegalArgumentException("context can't be null");
@@ -122,7 +122,7 @@ public class PdfConverter implements Runnable {
     mHtmlString = htmlString;
     mPdfFile = file;
     mIsCurrentlyConverting = true;
-    mShouldEncode = shouldEncode;
+    mShouldEncode = pdfOptions.getShouldEncode();
     mResultMap = resultMap;
     mPromise = promise;
     runOnUiThread(this);
