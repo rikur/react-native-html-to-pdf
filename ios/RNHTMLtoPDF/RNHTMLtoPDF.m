@@ -81,7 +81,7 @@ NSString *const PageDefaultOrientation = @"Portrait";
 }
 @end
 
-@implementation RNHTMLtoPDF {
+@implementation RnHtmlToPdf {
     RCTEventDispatcher *_eventDispatcher;
     RCTPromiseResolveBlock _resolveBlock;
     RCTPromiseRejectBlock _rejectBlock;
@@ -204,8 +204,11 @@ RCT_EXPORT_METHOD(convert:(NSDictionary *)options
     NSString* pageOrientation = PageDefaultOrientation;
     if (options[@"page"]) {
         NSDictionary * optionsPage = [RCTConvert NSDictionary:options[@"page"]];
-        pageSize = optionsPage[@"size"] ? [RCTConvert NSString:optionsPage[@"size"]] : PageDefaultSize;
-        pageOrientation = optionsPage[@"orientation"] ? [RCTConvert NSString:optionsPage[@"orientation"]] : PageDefaultOrientation;
+        pageOrientation = optionsPage[@"orientation"] ? [RCTConvert NSString:optionsPage[@"orientation"]] : pageOrientation;
+        if (optionsPage[@"size"]) {
+            NSDictionary * optionsPageSize = [RCTConvert NSDictionary:optionsPage[@"size"]];
+            pageSize = optionsPageSize[@"id"] ? [RCTConvert NSString:optionsPageSize[@"id"]] : pageSize;
+        }
     }
     for (int i = 0; i < (sizeof(pageTableLookup) / sizeof(PageStruct)); ++i) {
         PageStruct pg = pageTableLookup[i];
