@@ -99,6 +99,20 @@ RCT_EXPORT_MODULE();
 
 @synthesize bridge = _bridge;
 
+// Is this the correct approach?
+//
+// Returning methodQueue dispatch_get_main_queue fixed concurrency issue with TCMWSessionController writeDataInternal
+//
+- (dispatch_queue_t)methodQueue
+{
+    return dispatch_get_main_queue();
+}
+
++ (BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
+
 - (instancetype)init
 {
     if (self = [super init]) {
