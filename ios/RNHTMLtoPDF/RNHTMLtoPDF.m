@@ -11,8 +11,8 @@
 
 typedef struct PageStruct{
     const char * const key;
-    int width;
     int height;
+    int width;
 } PageStruct;
 
 
